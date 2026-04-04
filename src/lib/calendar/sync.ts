@@ -96,7 +96,7 @@ export async function syncUser(userId: string): Promise<void> {
   const team = user.teamId
     ? await prisma.team.findUnique({ where: { id: user.teamId } })
     : null;
-  const thresholds = (team?.weatherThresholds as typeof DEFAULT_THRESHOLDS) || DEFAULT_THRESHOLDS;
+  const thresholds = (team?.weatherThresholds as unknown as typeof DEFAULT_THRESHOLDS) || DEFAULT_THRESHOLDS;
 
   const allEvents = await prisma.syncedEvent.findMany({
     where: {
