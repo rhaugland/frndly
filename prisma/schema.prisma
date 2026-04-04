@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PrivacyLevel {
+  free_busy
+  titles
+  full_details
+}
+
+enum UserRole {
+  admin
+  member
+}
+
+enum CalendarProvider {
+  google
+  microsoft
+}
+
+enum WeatherCondition {
+  sunny
+  partly_cloudy
+  cloudy
+  rain
+  thunderstorm
+}
+
+model Team {
+  id                 String   @id @default(uuid())
+  name               String
+  inviteCode         String   @unique @map("invite_code")
+  createdById        String   @map("created_by_id")
+  weatherThresholds  Json?    @map("weather_thresholds")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  createdBy          User     @relation("TeamCreator", fields: [createdById], references: [id])
+  members            User[]   @relation("TeamMembers")
+
+  @@map("teams")
+}
+
+model User {
+  id                String       @id @default(uuid())
+  name              String
+  email             String       @unique
+  avatarUrl         String?      @map("avatar_url")
+  teamId            String?      @map("team_id")
+  privacyLevel      PrivacyLevel @default(free_busy) @map("privacy_level")
+  role              UserRole     @default(member)
+  workingHoursStart String       @default("09:00") @map("working_hours_start")
+  workingHoursEnd   String       @default("17:00") @map("working_hours_end")
+  timezone          String       @default("America/New_York")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+
+  team              Team?        @relation("TeamMembers", fields: [teamId], references: [id])
+  createdTeams      Team[]       @relation("TeamCreator")
+  calendarConnection CalendarConnection?
+  syncedEvents      SyncedEvent[]
+  weatherScores     WeatherScore[]
+  accounts          Account[]
+  sessions          Session[]
+
+  @@map("users")
+}
+
+model CalendarConnection {
+  id              String           @id @default(uuid())
+  userId          String           @unique @map("user_id")
+  provider        CalendarProvider
+  accessToken     String           @map("access_token")
+  refreshToken    String           @map("refresh_token")
+  tokenExpiresAt  DateTime         @map("token_expires_at")
+  lastSyncedAt    DateTime?        @map("last_synced_at")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("calendar_connections")
+}
+
+model SyncedEvent {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  sourceEventId  String   @map("source_event_id")
+  startTime      DateTime @map("start_time")
+  endTime        DateTime @map("end_time")
+  isAllDay       Boolean  @default(false) @map("is_all_day")
+  title          String?
+  isDeadline     Boolean  @default(false) @map("is_deadline")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sourceEventId])
+  @@map("synced_events")
+}
+
+model WeatherScore {
+  id               String           @id @default(uuid())
+  userId           String           @map("user_id")
+  date             DateTime         @db.Date
+  meetingsCount    Int              @map("meetings_count")
+  hoursBlocked     Decimal          @map("hours_blocked") @db.Decimal(4, 2)
+  percentBlocked   Decimal          @map("percent_blocked") @db.Decimal(5, 2)
+  backToBacks      Int              @map("back_to_backs")
+  hasDeadline      Boolean          @default(false) @map("has_deadline")
+  weatherCondition WeatherCondition @map("weather_condition")
+  computedAt       DateTime         @default(now()) @map("computed_at")
+
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("weather_scores")
+}
+
+// NextAuth required models
+model Account {
+  id                String  @id @default(uuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
