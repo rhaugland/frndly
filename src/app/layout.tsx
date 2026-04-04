@@ -6,7 +6,7 @@ import { Providers } from "@/components/providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Forecast — Team Calendar Weather",
+  title: "frndly — your team's calendar as weather",
   description: "See your team's week as weather. Know when to reach out.",
 };
 
