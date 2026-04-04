@@ -37,17 +37,19 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+  },
+  events: {
     async signIn({ user, account }) {
-      if (!account) return true;
+      if (!account) return;
 
       const provider =
         account.provider === "google" ? "google" : "microsoft";
 
       if (account.access_token && account.refresh_token) {
         await prisma.calendarConnection.upsert({
-          where: { userId: user.id },
+          where: { userId: user.id! },
           create: {
-            userId: user.id,
+            userId: user.id!,
             provider,
             accessToken: account.access_token,
             refreshToken: account.refresh_token,
@@ -65,8 +67,6 @@ export const authOptions: NextAuthOptions = {
           },
         });
       }
-
-      return true;
     },
   },
   pages: {
