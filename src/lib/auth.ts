@@ -10,6 +10,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
       authorization: {
         params: {
           scope:
@@ -22,6 +23,7 @@ export const authOptions: NextAuthOptions = {
     AzureADProvider({
       clientId: process.env.MICROSOFT_CLIENT_ID!,
       clientSecret: process.env.MICROSOFT_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
       tenantId: "common",
       authorization: {
         params: {
@@ -31,6 +33,15 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // After sign-in, always go to dashboard
+      if (url.includes("/login") || url === baseUrl || url === `${baseUrl}/`) {
+        return `${baseUrl}/dashboard`;
+      }
+      if (url.startsWith(baseUrl)) return url;
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      return `${baseUrl}/dashboard`;
+    },
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;

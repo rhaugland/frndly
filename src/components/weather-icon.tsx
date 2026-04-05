@@ -11,10 +11,10 @@ interface WeatherIconProps {
 
 const ICON_MAP: Record<WeatherType, { icon: typeof Sun; color: string }> = {
   sunny: { icon: Sun, color: "#FBBF24" },
-  partly_cloudy: { icon: CloudSun, color: "#94A3B8" },
-  cloudy: { icon: Cloud, color: "#64748B" },
-  rain: { icon: CloudRain, color: "#3B82F6" },
-  thunderstorm: { icon: CloudLightning, color: "#7C3AED" },
+  partly_cloudy: { icon: CloudSun, color: "#93C5FD" },
+  cloudy: { icon: Cloud, color: "#A5B4C8" },
+  rain: { icon: CloudRain, color: "#7C9CB8" },
+  thunderstorm: { icon: CloudLightning, color: "#8B8FA8" },
 };
 
 export function WeatherIcon({ condition, size = 64 }: WeatherIconProps) {

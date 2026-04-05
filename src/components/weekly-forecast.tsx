@@ -18,25 +18,25 @@ interface WeeklyForecastProps {
 }
 
 const WEATHER_BG: Record<WeatherType, string> = {
-  sunny: "bg-gradient-to-b from-amber-100 to-sky-50",
-  partly_cloudy: "bg-gradient-to-b from-sky-100 to-gray-100",
-  cloudy: "bg-gradient-to-b from-gray-200 to-slate-200",
-  rain: "bg-gradient-to-b from-slate-300 to-blue-100",
-  thunderstorm: "bg-gradient-to-b from-purple-800 to-gray-700",
+  sunny: "bg-gradient-to-b from-amber-100 to-sky-100",
+  partly_cloudy: "bg-gradient-to-b from-sky-100 to-blue-100",
+  cloudy: "bg-gradient-to-b from-blue-100 to-slate-200",
+  rain: "bg-gradient-to-b from-slate-200 to-indigo-200",
+  thunderstorm: "bg-gradient-to-b from-indigo-200 to-violet-200",
 };
 
 const WEATHER_TEXT_COLOR: Record<WeatherType, string> = {
-  sunny: "text-amber-900",
-  partly_cloudy: "text-sky-900",
-  cloudy: "text-gray-700",
-  rain: "text-blue-900",
-  thunderstorm: "text-purple-100",
+  sunny: "text-amber-800",
+  partly_cloudy: "text-sky-800",
+  cloudy: "text-slate-700",
+  rain: "text-slate-700",
+  thunderstorm: "text-indigo-800",
 };
 
 export function WeeklyForecast({ userName, days }: WeeklyForecastProps) {
   return (
     <div>
-      <h2 className="mb-4 text-lg font-semibold text-gray-800">
+      <h2 className="mb-4 text-lg font-semibold text-stone-700">
         {userName}&apos;s week
       </h2>
       <div className="flex gap-3 overflow-x-auto pb-4">
@@ -44,11 +44,11 @@ export function WeeklyForecast({ userName, days }: WeeklyForecastProps) {
           <div
             key={day.date}
             className={`relative flex-shrink-0 w-32 rounded-2xl ${WEATHER_BG[day.weatherCondition]} p-4 shadow-sm ${
-              day.isBestDay ? "ring-2 ring-amber-400 ring-offset-2" : ""
+              day.isBestDay ? "ring-2 ring-amber-300 ring-offset-2" : ""
             }`}
           >
             {day.isBestDay && (
-              <span className="absolute -top-2 -right-2 rounded-full bg-amber-400 px-2 py-0.5 text-xs font-bold text-amber-900">
+              <span className="absolute -top-2 -right-2 rounded-full bg-amber-200 px-2 py-0.5 text-xs font-bold text-amber-800">
                 Best
               </span>
             )}
