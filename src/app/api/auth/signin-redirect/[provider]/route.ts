@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: Promise<{ provider: string }> }
 ) {
   const { provider } = await params;
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3001";
+  const baseUrl = `${req.nextUrl.protocol}//${req.nextUrl.host}`;
   const callbackUrl = req.nextUrl.searchParams.get("callbackUrl") || "/dashboard";
 
   // Get CSRF token server-side
