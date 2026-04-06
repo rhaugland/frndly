@@ -21,11 +21,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Team not found" }, { status: 404 });
   }
 
-  // Allow if user created this team OR is currently a member
+  // Allow switching to demo team for everyone, or if user created/is member of the team
+  const isDemoTeam = team.inviteCode === "FRNDLY-DEMO";
   const isCreator = team.createdById === session.user.id;
   const currentMember = await prisma.user.findFirst({ where: { id: session.user.id, teamId } });
 
-  if (!isCreator && !currentMember) {
+  if (!isDemoTeam && !isCreator && !currentMember) {
     return NextResponse.json({ error: "Not a member of this team" }, { status: 403 });
   }
 

@@ -152,9 +152,13 @@ export default async function DashboardPage() {
 
   const hasRealData = teammateData.length > 0;
 
-  // Build workspaces list: current team + all teams user created (query directly for reliability)
+  // Build workspaces list: current team + owned teams + demo team (always visible)
   const ownedTeams = await prisma.team.findMany({
     where: { createdById: user.id },
+    include: { _count: { select: { members: true } } },
+  });
+  const demoTeam = await prisma.team.findFirst({
+    where: { inviteCode: "FRNDLY-DEMO" },
     include: { _count: { select: { members: true } } },
   });
 
@@ -180,6 +184,17 @@ export default async function DashboardPage() {
         memberCount: t._count.members,
       });
     }
+  }
+  // Always include demo team for all users
+  if (demoTeam && !workspaceSet.has(demoTeam.id)) {
+    workspaceSet.set(demoTeam.id, {
+      id: demoTeam.id,
+      name: demoTeam.name,
+      inviteCode: demoTeam.inviteCode,
+      isActive: false,
+      isOwner: false,
+      memberCount: demoTeam._count.members,
+    });
   }
   const workspaces = Array.from(workspaceSet.values());
 

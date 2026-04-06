@@ -78,6 +78,18 @@ export const authOptions: NextAuthOptions = {
           },
         });
       }
+
+      // Auto-assign new users to the demo team so they see sample data
+      const dbUser = await prisma.user.findUnique({ where: { id: user.id! } });
+      if (dbUser && !dbUser.teamId) {
+        const demoTeam = await prisma.team.findFirst({ where: { inviteCode: "FRNDLY-DEMO" } });
+        if (demoTeam) {
+          await prisma.user.update({
+            where: { id: user.id! },
+            data: { teamId: demoTeam.id },
+          });
+        }
+      }
     },
   },
   pages: {
