@@ -56,7 +56,7 @@ export default async function WeekPage({ params, searchParams }: PageProps) {
     const dateKey = date.toISOString().split("T")[0];
 
     const score = scores.find(
-      (s) => s.date.toISOString().split("T")[0] === dateKey
+      (s: typeof scores[number]) => s.date.toISOString().split("T")[0] === dateKey
     );
 
     const condition = (score?.weatherCondition || "sunny") as
