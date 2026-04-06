@@ -82,7 +82,7 @@ export default async function DashboardPage() {
     const meetings = t.syncedEvents.map((e: Teammate["syncedEvents"][number]) => ({
       start: e.startTime.getUTCHours() * 60 + e.startTime.getUTCMinutes(),
       end: e.endTime.getUTCHours() * 60 + e.endTime.getUTCMinutes(),
-    })).sort((a, b) => a.start - b.start);
+    })).sort((a: { start: number; end: number }, b: { start: number; end: number }) => a.start - b.start);
 
     const openSlots: { start: string; end: string; duration: number }[] = [];
     // Find gaps between consecutive meetings
