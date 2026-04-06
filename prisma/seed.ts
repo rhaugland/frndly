@@ -35,6 +35,18 @@ async function main() {
 
   console.log(`Created team: ${team.name} (invite: ${team.inviteCode})`);
 
+  // Link Ryan's real Google account to the demo team
+  const ryan = await prisma.user.findUnique({ where: { email: "ryanrhaugland@gmail.com" } });
+  if (ryan) {
+    await prisma.user.update({
+      where: { id: ryan.id },
+      data: { teamId: team.id },
+    });
+    console.log("Linked ryanrhaugland@gmail.com to demo team");
+  } else {
+    console.log("ryanrhaugland@gmail.com not found — will be linked on next sign-in via invite code FRNDLY-DEMO");
+  }
+
   // Create second workspace
   const team2 = await prisma.team.upsert({
     where: { inviteCode: "FRNDLY-ENG" },
