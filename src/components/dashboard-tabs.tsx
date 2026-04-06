@@ -63,7 +63,7 @@ interface DashboardTabsProps {
 }
 
 export function DashboardTabs({ teammates, teamId, teamName, inviteCode, suggestions, hasRealData, workspaces }: DashboardTabsProps) {
-  const [tab, setTab] = useState<"home" | "team" | "favorites">("home");
+  const [tab, setTab] = useState<"home" | "team" | "workspaces" | "favorites">("home");
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -99,6 +99,7 @@ export function DashboardTabs({ teammates, teamId, teamName, inviteCode, suggest
   const tabs = [
     { key: "home" as const, label: "Home" },
     { key: "team" as const, label: "Team" },
+    { key: "workspaces" as const, label: "Workspaces" },
     { key: "favorites" as const, label: "Favorites" },
   ];
 
@@ -162,6 +163,15 @@ export function DashboardTabs({ teammates, teamId, teamName, inviteCode, suggest
           <div className="w-full lg:w-80 shrink-0">
             <InvitePanel inviteCode={inviteCode} />
           </div>
+        </div>
+      )}
+
+      {tab === "workspaces" && (
+        <div>
+          <h2 className="mb-4 text-lg font-semibold text-slate-800">
+            Workspaces
+          </h2>
+          <WorkspacesPanel workspaces={workspaces} />
         </div>
       )}
 

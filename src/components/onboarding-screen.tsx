@@ -93,7 +93,7 @@ export function OnboardingScreen({ userName }: { userName: string }) {
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-              className="w-full rounded-xl border border-sky-200 px-4 py-3 text-sm focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
+              className="w-full rounded-xl border border-sky-200 bg-white px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
               autoFocus
               maxLength={100}
             />
@@ -121,7 +121,7 @@ export function OnboardingScreen({ userName }: { userName: string }) {
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleJoin()}
-              className="w-full rounded-xl border border-sky-200 px-4 py-3 text-sm focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
+              className="w-full rounded-xl border border-sky-200 bg-white px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
               autoFocus
             />
             <button
