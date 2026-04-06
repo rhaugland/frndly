@@ -60,8 +60,10 @@ export default async function DashboardPage() {
     },
   });
 
+  type Teammate = typeof teammates[number];
+
   const myWeather = teammates
-    .find((t) => t.id === user.id)
+    .find((t: Teammate) => t.id === user.id)
     ?.weatherScores[0]?.weatherCondition as
     | "sunny"
     | "partly_cloudy"
@@ -70,14 +72,14 @@ export default async function DashboardPage() {
     | "thunderstorm"
     | undefined;
 
-  const otherTeammates = teammates.filter((t) => t.id !== user.id);
+  const otherTeammates = teammates.filter((t: Teammate) => t.id !== user.id);
 
-  const teammateData = otherTeammates.map((t) => {
+  const teammateData = otherTeammates.map((t: Teammate) => {
     const score = t.weatherScores[0];
     const wc = (score?.weatherCondition || "sunny") as typeof WEATHER_TYPES[number];
 
     // Compute gaps between meetings (non-meeting times)
-    const meetings = t.syncedEvents.map((e) => ({
+    const meetings = t.syncedEvents.map((e: Teammate["syncedEvents"][number]) => ({
       start: e.startTime.getUTCHours() * 60 + e.startTime.getUTCMinutes(),
       end: e.endTime.getUTCHours() * 60 + e.endTime.getUTCMinutes(),
     })).sort((a, b) => a.start - b.start);
@@ -132,10 +134,10 @@ export default async function DashboardPage() {
     };
   });
 
-  const schedules: UserSchedule[] = otherTeammates.map((t) => ({
+  const schedules: UserSchedule[] = otherTeammates.map((t: Teammate) => ({
     userId: t.id,
     userName: t.name || "Unknown",
-    events: t.syncedEvents.map((e) => ({
+    events: t.syncedEvents.map((e: Teammate["syncedEvents"][number]) => ({
       startTime: e.startTime,
       endTime: e.endTime,
     })),
