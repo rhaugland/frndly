@@ -115,7 +115,7 @@ export async function syncUser(userId: string): Promise<void> {
   }
 
   for (const [dateKey, dayEvents] of byDate) {
-    const calEvents: CalendarEvent[] = dayEvents.map((e) => ({
+    const calEvents: CalendarEvent[] = dayEvents.map((e: typeof allEvents[number]) => ({
       startTime: e.startTime,
       endTime: e.endTime,
       isAllDay: e.isAllDay,
