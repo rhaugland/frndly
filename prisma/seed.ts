@@ -7,54 +7,44 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log("Seeding database...");
 
-  // Create team
+  // Find Ryan's real Google account
+  let ryan = await prisma.user.findUnique({ where: { email: "ryanrhaugland@gmail.com" } });
+
+  if (!ryan) {
+    // Create a placeholder if Ryan hasn't signed in yet
+    ryan = await prisma.user.create({
+      data: {
+        name: "Ryan Haugland",
+        email: "ryanrhaugland@gmail.com",
+        workingHoursStart: "09:00",
+        workingHoursEnd: "17:00",
+        timezone: "America/New_York",
+      },
+    });
+    console.log("Created placeholder for ryanrhaugland@gmail.com");
+  }
+
+  // Create demo team owned by Ryan's real account
   const team = await prisma.team.upsert({
     where: { inviteCode: "FRNDLY-DEMO" },
-    update: {},
+    update: { createdById: ryan.id },
     create: {
       name: "Frndly Demo Team",
       inviteCode: "FRNDLY-DEMO",
-      createdBy: {
-        create: {
-          name: "Ryan Haugland",
-          email: "ryan@frndly.app",
-          workingHoursStart: "09:00",
-          workingHoursEnd: "17:00",
-          timezone: "America/New_York",
-        },
-      },
+      createdById: ryan.id,
     },
-    include: { createdBy: true },
-  });
-
-  // Connect the creator to the team
-  await prisma.user.update({
-    where: { id: team.createdById },
-    data: { teamId: team.id },
   });
 
   console.log(`Created team: ${team.name} (invite: ${team.inviteCode})`);
 
-  // Link Ryan's real Google account to the demo team
-  const ryan = await prisma.user.findUnique({ where: { email: "ryanrhaugland@gmail.com" } });
-  if (ryan) {
-    await prisma.user.update({
-      where: { id: ryan.id },
-      data: { teamId: team.id },
-    });
-    console.log("Linked ryanrhaugland@gmail.com to demo team");
-  } else {
-    console.log("ryanrhaugland@gmail.com not found — will be linked on next sign-in via invite code FRNDLY-DEMO");
-  }
-
-  // Create second workspace
+  // Create second workspace also owned by Ryan
   const team2 = await prisma.team.upsert({
     where: { inviteCode: "FRNDLY-ENG" },
-    update: {},
+    update: { createdById: ryan.id },
     create: {
       name: "Engineering",
       inviteCode: "FRNDLY-ENG",
-      createdById: team.createdById,
+      createdById: ryan.id,
     },
   });
 

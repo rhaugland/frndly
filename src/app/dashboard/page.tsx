@@ -72,9 +72,10 @@ export default async function DashboardPage() {
     | "thunderstorm"
     | undefined;
 
-  const otherTeammates = teammates.filter((t: Teammate) => t.id !== user.id);
+  // Include all teammates (including self) so everyone shows on the dashboard
+  const allTeammates = teammates;
 
-  const teammateData = otherTeammates.map((t: Teammate) => {
+  const teammateData = allTeammates.map((t: Teammate) => {
     const score = t.weatherScores[0];
     const wc = (score?.weatherCondition || "sunny") as typeof WEATHER_TYPES[number];
 
@@ -134,7 +135,7 @@ export default async function DashboardPage() {
     };
   });
 
-  const schedules: UserSchedule[] = otherTeammates.map((t: Teammate) => ({
+  const schedules: UserSchedule[] = allTeammates.map((t: Teammate) => ({
     userId: t.id,
     userName: t.name || "Unknown",
     events: t.syncedEvents.map((e: Teammate["syncedEvents"][number]) => ({
