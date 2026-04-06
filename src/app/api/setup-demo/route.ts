@@ -25,7 +25,20 @@ export async function POST() {
     results.push("Created demo team");
   }
 
-  // 2. Create dummy teammates in demo team
+  // 2. Remove old placeholder user if it exists
+  const placeholder = await prisma.user.findUnique({ where: { email: "ryan@frndly.app" } });
+  if (placeholder) {
+    // Delete related records first, then the user
+    await prisma.weatherScore.deleteMany({ where: { userId: placeholder.id } });
+    await prisma.syncedEvent.deleteMany({ where: { userId: placeholder.id } });
+    await prisma.session.deleteMany({ where: { userId: placeholder.id } });
+    await prisma.account.deleteMany({ where: { userId: placeholder.id } });
+    await prisma.calendarConnection.deleteMany({ where: { userId: placeholder.id } });
+    await prisma.user.delete({ where: { id: placeholder.id } });
+    results.push("Removed placeholder ryan@frndly.app");
+  }
+
+  // 3. Create dummy teammates in demo team
   const teammates = [
     { name: "Sarah Chen", email: "sarah@frndly.app", weather: "sunny", meetings: 1, pctBlocked: 12 },
     { name: "Marcus Johnson", email: "marcus@frndly.app", weather: "partly_cloudy", meetings: 3, pctBlocked: 38 },

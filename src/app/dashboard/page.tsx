@@ -72,8 +72,12 @@ export default async function DashboardPage() {
     | "thunderstorm"
     | undefined;
 
-  // Include all teammates (including self) so everyone shows on the dashboard
-  const allTeammates = teammates;
+  // On real workspaces, include self so you see your own data
+  // On demo team, exclude self so you only see the dummy users
+  const isDemoTeam = user.team.inviteCode === "FRNDLY-DEMO";
+  const allTeammates = isDemoTeam
+    ? teammates.filter((t: Teammate) => t.id !== user.id)
+    : teammates;
 
   const teammateData = allTeammates.map((t: Teammate) => {
     const score = t.weatherScores[0];
