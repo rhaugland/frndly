@@ -171,7 +171,7 @@ export function DashboardTabs({ teammates, teamId, teamName, inviteCode, suggest
           <h2 className="mb-4 text-lg font-semibold text-slate-800">
             Workspaces
           </h2>
-          <WorkspacesPanel workspaces={workspaces} />
+          <WorkspacesPanel workspaces={workspaces} currentTeamId={teamId} />
         </div>
       )}
 
