@@ -36,9 +36,9 @@ export async function GET() {
     },
   });
 
-  const schedules: UserSchedule[] = teammates.map((t) => ({
+  const schedules: UserSchedule[] = teammates.map((t: typeof teammates[number]) => ({
     userId: t.id,
-    userName: t.name,
+    userName: t.name || "Unknown",
     events: t.syncedEvents.map((e) => ({
       startTime: e.startTime,
       endTime: e.endTime,

@@ -79,7 +79,8 @@ export default async function WeekPage({ params, searchParams }: PageProps) {
     <div className="min-h-screen bg-gray-50">
       <TopBar
         teamName={currentUser.team.name}
-        userName={currentUser.name}
+        userName={currentUser.name || ""}
+        workspaces={[{ id: currentUser.team.id, name: currentUser.team.name, isActive: true }]}
       />
       <main className="mx-auto max-w-4xl px-4 py-8">
         <a
@@ -88,7 +89,7 @@ export default async function WeekPage({ params, searchParams }: PageProps) {
         >
           &larr; Back to dashboard
         </a>
-        <WeeklyForecast userName={targetUser.name} days={days} />
+        <WeeklyForecast userName={targetUser.name || "Unknown"} days={days} />
       </main>
     </div>
   );
