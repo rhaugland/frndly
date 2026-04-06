@@ -21,10 +21,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Team not found" }, { status: 404 });
   }
 
-  const isMember = team.createdById === session.user.id ||
-    await prisma.user.findFirst({ where: { id: session.user.id, teamId } });
+  // Allow if user created this team OR is currently a member
+  const isCreator = team.createdById === session.user.id;
+  const currentMember = await prisma.user.findFirst({ where: { id: session.user.id, teamId } });
 
-  if (!isMember) {
+  if (!isCreator && !currentMember) {
     return NextResponse.json({ error: "Not a member of this team" }, { status: 403 });
   }
 

@@ -152,7 +152,12 @@ export default async function DashboardPage() {
 
   const hasRealData = teammateData.length > 0;
 
-  // Build workspaces list from teams the user created + current team
+  // Build workspaces list: current team + all teams user created (query directly for reliability)
+  const ownedTeams = await prisma.team.findMany({
+    where: { createdById: user.id },
+    include: { _count: { select: { members: true } } },
+  });
+
   const workspaceSet = new Map<string, { id: string; name: string; inviteCode: string; isActive: boolean; isOwner: boolean; memberCount: number }>();
   if (user.team) {
     workspaceSet.set(user.team.id, {
@@ -164,7 +169,7 @@ export default async function DashboardPage() {
       memberCount: teammates.length,
     });
   }
-  for (const t of user.createdTeams) {
+  for (const t of ownedTeams) {
     if (!workspaceSet.has(t.id)) {
       workspaceSet.set(t.id, {
         id: t.id,
